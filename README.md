@@ -4,11 +4,11 @@
 Please refer to DCAMA: https://github.com/pawn-sxy/DCAMA
 
 ## Training
-'''
+```
 python scripts/train.sh
-'''
+```
 
 ## Testing
-'''
+```
 python scripts/test.sh
-'''
+```
