@@ -1,0 +1,12 @@
+python ./train_1gpu_retriever.py --datapath "/home/bkdongxianchi/MY_MOT/TWL/data" \
+           --benchmark coco \
+           --fold 1 \
+           --bsz 1 \
+           --nworker 0 \
+           --backbone resnet50 \
+           --feature_extractor_path "/home/bkdongxianchi/MY_MOT/TWL/DCAMA/backbones/resnet50_a1h-35c100f8.pth" \
+           --logpath "/home/bkdongxianchi/MY_MOT/TWL/DCAMA/log" \
+           --lr 1e-4 \
+           --nepoch 50 \
+           --load "/home/bkdongxianchi/MY_MOT/TWL/DCAMA/log/fold_1_ft_v0/model_45.pt" \
+           --nshot 1

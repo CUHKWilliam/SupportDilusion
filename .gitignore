@@ -1,0 +1,9 @@
+logs/
+log/
+*.txt
+debug/
+data/
+__pycache__/
+*.png
+*.jpg
+*.jpeg
