@@ -87,7 +87,7 @@ if __name__ == '__main__':
     Logger.initialize(args, training=False)
 
     # Model initialization
-    model = DCAMA(args.backbone, args.feature_extractor_path, args.use_original_imgsize)
+    model = DCAMA(args.backbone, args.feature_extractor_path, args.use_original_imgsize, args.use_sc, args.pruning)
     model.eval()
 
     # Device setup
