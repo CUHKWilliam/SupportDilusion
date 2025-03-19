@@ -10,5 +10,4 @@ python -u -m torch.distributed.launch --nproc_per_node=4 --master_port=18024 \
            --lr 1e-4 \
            --nepoch  50 \
            --load "~/MY_MOT/TWL/logistic_project/DCAMA/checkpoint/coco-20i/swin_fold2.pt" \
-           --nshot 3
-#           --load "/research/d6/rshr/xjgao/twl/logistic_project/DCAMA/checkpoint/coco-20i/resnet50_fold0.pt" \
+           --nshot 2

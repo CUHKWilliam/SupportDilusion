@@ -8,7 +8,7 @@ from torch.autograd import Variable
 TRAIN = True
 
 class MultiHeadedAttention(nn.Module):
-    def __init__(self, h, d_model, dropout=0.1):
+    def __init__(self, h, d_model, dropout=0.1, use_sc=False):
         "Take in model size and number of heads."
         super(MultiHeadedAttention, self).__init__()
         assert d_model % h == 0
@@ -18,6 +18,7 @@ class MultiHeadedAttention(nn.Module):
         self.linears = clones(nn.Linear(d_model, d_model), 2)
         self.attn = None
         self.dropout = nn.Dropout(p=dropout)
+        self.use_sc = use_sc
 
     def forward(self, query, key, value, mask=None):
         if mask is not None:
@@ -26,17 +27,19 @@ class MultiHeadedAttention(nn.Module):
         nbatches = query.size(0)
         
         # 1) Do all the linear projections in batch from d_model => h x d_k
-        query, key = \
-            [l(x).view(nbatches, -1, self.h, self.d_k).transpose(1, 2)
-             for l, x in zip(self.linears, (query, key))]
+        if not self.use_sc:
+            query, key = \
+                [l(x).view(nbatches, -1, self.h, self.d_k).transpose(1, 2)
+                 for l, x in zip(self.linears, (query, key))]
 
+        else:
+            query_dir, key_dir = [l(x).view(nbatches, -1, self.h, self.d_k).transpose(1, 2) for l, x in zip([self.linears[0], self.linears[0]], (query, key))]
+            query_norm = self.linears[1](query)[:, :, :self.h].view(nbatches, -1, self.h).transpose(1, 2)
+            key_norm = self.linears[1](key)[:, :, :self.h].view(nbatches, -1, self.h).transpose(1, 2)
+            query = query_dir / query_dir.norm(dim=-1).unsqueeze(-1) * 10 * query_norm.unsqueeze(-1)
+            key = key_dir / key_dir.norm(dim=-1).unsqueeze(-1) * 10 * key_norm.unsqueeze(-1)
+        
         value = value.repeat(self.h, 1, 1).transpose(0, 1).contiguous().unsqueeze(-1)
-
-        # query_dir, key_dir = [l(x).view(nbatches, -1, self.h, self.d_k).transpose(1, 2) for l, x in zip([self.linears[0], self.linears[0]], (query, key))]
-        # query_norm = self.linears[1](query)[:, :, :self.h].view(nbatches, -1, self.h).transpose(1, 2)
-        # key_norm = self.linears[1](key)[:, :, :self.h].view(nbatches, -1, self.h).transpose(1, 2)
-        # query = query_dir / query_dir.norm(dim=-1).unsqueeze(-1) * 10 * query_norm.unsqueeze(-1)
-        # key = key_dir / key_dir.norm(dim=-1).unsqueeze(-1) * 10 * key_norm.unsqueeze(-1)
         
         if not TRAIN:
             query = query.detach().cpu()
@@ -47,7 +50,6 @@ class MultiHeadedAttention(nn.Module):
                                  dropout=self.dropout)
         if not TRAIN:
             x = x.cuda()
-
         # 3) "Concat" using a view and apply a final linear.
         return torch.mean(x, -3)
 

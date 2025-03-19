@@ -26,7 +26,8 @@ def parse_opts():
     parser.add_argument('--visualize', action='store_true')
     parser.add_argument('--vispath', type=str, default='./vis')
     parser.add_argument('--use_original_imgsize', action='store_true')
-    parser.add_argument('--use_sc', type=bool, default=False)
-    parser.add_argument('--use_pruning', type=bool, default=False)
+
+    parser.add_argument('--use_sc', action="store_true")
+    parser.add_argument('--use_pruning', action='store_true')
     args = parser.parse_args()
     return args
