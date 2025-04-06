@@ -5,10 +5,10 @@ Please refer to DCAMA: https://github.com/pawn-sxy/DCAMA
 
 ## Training
 ```
-python scripts/train.sh
+bash scripts/train.sh
 ```
 
 ## Testing
 ```
-python scripts/test.sh
+bash scripts/test.sh
 ```
